@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37012.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PontusGo.API", "src\PontusGo.API\PontusGo.API.csproj", "{331E298C-E7A7-1B08-81C8-8DAA01B050FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PontusGo.Application", "src\PontusGo.Application\PontusGo.Application.csproj", "{3DBDA6A3-E760-13EE-8CB3-3EFA4BD023BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PontusGo.Domain", "src\PontusGo.Domain\PontusGo.Domain.csproj", "{7D2A303B-4285-1000-C0C5-0630B3E7438B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PontusGo.Infrastructure", "src\PontusGo.Infrastructure\PontusGo.Infrastructure.csproj", "{4128E76D-5DE3-3F1A-3425-3000E06AB203}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{331E298C-E7A7-1B08-81C8-8DAA01B050FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{331E298C-E7A7-1B08-81C8-8DAA01B050FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{331E298C-E7A7-1B08-81C8-8DAA01B050FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{331E298C-E7A7-1B08-81C8-8DAA01B050FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DBDA6A3-E760-13EE-8CB3-3EFA4BD023BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DBDA6A3-E760-13EE-8CB3-3EFA4BD023BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DBDA6A3-E760-13EE-8CB3-3EFA4BD023BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DBDA6A3-E760-13EE-8CB3-3EFA4BD023BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D2A303B-4285-1000-C0C5-0630B3E7438B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D2A303B-4285-1000-C0C5-0630B3E7438B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D2A303B-4285-1000-C0C5-0630B3E7438B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D2A303B-4285-1000-C0C5-0630B3E7438B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4128E76D-5DE3-3F1A-3425-3000E06AB203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4128E76D-5DE3-3F1A-3425-3000E06AB203}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4128E76D-5DE3-3F1A-3425-3000E06AB203}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4128E76D-5DE3-3F1A-3425-3000E06AB203}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1627914C-E3E5-4C8E-9380-F6B0CFB03DBC}
+	EndGlobalSection
+EndGlobal

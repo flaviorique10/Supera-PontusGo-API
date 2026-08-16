@@ -1,0 +1,6 @@
+@PontusGo.API_HostAddress = http://localhost:5063
+
+GET {{PontusGo.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

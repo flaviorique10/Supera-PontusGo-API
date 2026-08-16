@@ -1,0 +1,21 @@
+# Pastas de build
+[Bb]in/
+[Oo]bj/
+
+# Arquivos de usuário e cache do Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Arquivos de configuração local (para não vazar senhas locais)
+appsettings.json
+appsettings.Development.json
+appsettings.Local.json
+
+# Logs
+*.log
+*.db
+*.db-shm
+*.db-wal
