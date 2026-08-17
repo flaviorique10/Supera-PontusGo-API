@@ -16,17 +16,39 @@ public static class LocalDemoSeeder
             Name = "Caio Martins",
             Email = "admin@pontusgo.demo",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
-            Role = UserRole.Admin
+            Role = UserRole.Admin,
+            TuitionStatus = TuitionStatus.UpToDate
         };
 
-        var student = new User
+        var student1 = new User
         {
             Name = "Marina Costa",
             Email = "aluno@pontusgo.demo",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("Aluno@123"),
-            Role = UserRole.Student
+            Role = UserRole.Student,
+            TuitionStatus = TuitionStatus.UpToDate
         };
-        student.AddPoints(3_130);
+        student1.AddPoints(3_130);
+
+        var student2 = new User
+        {
+            Name = "Lucas Silva",
+            Email = "lucas@pontusgo.demo",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Aluno@123"),
+            Role = UserRole.Student,
+            TuitionStatus = TuitionStatus.Pending
+        };
+        student2.AddPoints(180);
+
+        var student3 = new User
+        {
+            Name = "Beatriz Santos",
+            Email = "beatriz@pontusgo.demo",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Aluno@123"),
+            Role = UserRole.Student,
+            TuitionStatus = TuitionStatus.Overdue
+        };
+        student3.AddPoints(90);
 
         var cafeteria = CreateProduct(
             "Vale cafeteria",
@@ -49,19 +71,38 @@ public static class LocalDemoSeeder
             480,
             23);
 
-        student.DeductPoints(cafeteria.PointsCost);
+        student1.DeductPoints(cafeteria.PointsCost);
         cafeteria.DecreaseStock();
 
-        var initialPoints = new PointTransaction(
-            student.Id,
+        var initialPoints1 = new PointTransaction(
+            student1.Id,
             3_130,
             "Saldo inicial do ambiente local")
         {
             PointsAwarded = 3_130,
             ActivityDescription = "Saldo inicial do ambiente local"
         };
+
+        var initialPoints2 = new PointTransaction(
+            student2.Id,
+            180,
+            "Assiduidade (+10 pts), Participação (+10 pts), Fazer Tarefa (+10 pts)")
+        {
+            PointsAwarded = 180,
+            ActivityDescription = "Assiduidade (+10 pts), Participação (+10 pts), Fazer Tarefa (+10 pts)"
+        };
+
+        var initialPoints3 = new PointTransaction(
+            student3.Id,
+            90,
+            "Assiduidade (+10 pts), Participação (+10 pts)")
+        {
+            PointsAwarded = 90,
+            ActivityDescription = "Assiduidade (+10 pts), Participação (+10 pts)"
+        };
+
         var redemption = new Redemption(
-            student.Id,
+            student1.Id,
             cafeteria.Id,
             cafeteria.PointsCost,
             "PG-8A2F-41C9")
@@ -69,9 +110,9 @@ public static class LocalDemoSeeder
             PointsSpent = cafeteria.PointsCost
         };
 
-        await context.Users.AddRangeAsync(admin, student);
+        await context.Users.AddRangeAsync(admin, student1, student2, student3);
         await context.Products.AddRangeAsync(cafeteria, cinema, books, notebook);
-        await context.PointTransactions.AddAsync(initialPoints);
+        await context.PointTransactions.AddRangeAsync(initialPoints1, initialPoints2, initialPoints3);
         await context.Redemptions.AddAsync(redemption);
         await context.SaveChangesAsync();
     }

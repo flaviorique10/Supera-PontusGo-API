@@ -23,6 +23,7 @@ public class PontusGoDbContext : DbContext
             entity.Property(user => user.Name).IsRequired().HasMaxLength(150);
             entity.Property(user => user.Email).IsRequired().HasMaxLength(150);
             entity.HasIndex(user => user.Email).IsUnique();
+            entity.Property(user => user.TuitionStatus).IsRequired().HasDefaultValue(PontusGo.Domain.Enums.TuitionStatus.UpToDate);
         });
 
         modelBuilder.Entity<Product>(entity =>
