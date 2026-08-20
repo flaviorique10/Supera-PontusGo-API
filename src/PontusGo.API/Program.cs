@@ -50,6 +50,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["JwtSettings:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                // Verifica se o cookie HttpOnly existe e injeta o token automaticamente
+                if (context.Request.Cookies.TryGetValue("pontusgo_token", out var cookieToken) && !string.IsNullOrWhiteSpace(cookieToken))
+                {
+                    context.Token = cookieToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -64,7 +77,8 @@ builder.Services.AddCors(options =>
                 "http://localhost:5173",
                 "https://pontusgo-recompensas.edinavarroneto.chatgpt.site")
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials(); // <-- Permite envio e recebimento de Cookies HttpOnly com credenciais
     });
 });
 

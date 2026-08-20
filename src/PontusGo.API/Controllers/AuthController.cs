@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using PontusGo.Application.DTOs;
 using PontusGo.Application.Interfaces;
 
@@ -23,6 +23,37 @@ public class AuthController : ControllerBase
         if (result == null)
             return Unauthorized(new { message = "E-mail ou senha inválidos." });
 
-        return Ok(result);
+        var isHttps = Request.IsHttps;
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true, // Impede acesso via JavaScript prevenindo ataques XSS
+            Secure = isHttps, // Exige HTTPS caso esteja trafegando em conexão segura
+            SameSite = isHttps ? SameSiteMode.None : SameSiteMode.Lax, // SameSite=None permite cookies cross-origin (localhost:5173 -> localhost:7242)
+            Expires = DateTime.UtcNow.AddDays(7)
+        };
+
+        // Anexa o cookie HttpOnly na resposta HTTP
+        Response.Cookies.Append("pontusgo_token", result.Token, cookieOptions);
+
+        return Ok(new
+        {
+            user = result.User
+        });
+    }
+
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        var isHttps = Request.IsHttps;
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = isHttps,
+            SameSite = isHttps ? SameSiteMode.None : SameSiteMode.Lax,
+            Expires = DateTime.UtcNow.AddDays(-1)
+        };
+
+        Response.Cookies.Delete("pontusgo_token", cookieOptions);
+        return Ok(new { message = "Logout realizado com sucesso." });
     }
 }
