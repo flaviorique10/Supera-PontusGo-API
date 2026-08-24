@@ -44,6 +44,11 @@ public class RedemptionRepository : IRedemptionRepository
             .ToListAsync();
     }
 
+    public async Task<bool> HasRedemptionsForProductAsync(Guid productId)
+    {
+        return await _context.Redemptions.AnyAsync(r => r.ProductId == productId);
+    }
+
     public async Task AddAsync(Redemption redemption)
     {
         await _context.Redemptions.AddAsync(redemption);

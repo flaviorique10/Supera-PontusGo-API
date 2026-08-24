@@ -37,7 +37,7 @@ public class RedemptionsController : ControllerBase
     }
 
     [HttpGet("admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Teacher")]
     public async Task<IActionResult> GetAll([FromQuery] string? status = null)
     {
         try
@@ -51,7 +51,7 @@ public class RedemptionsController : ControllerBase
     }
 
     [HttpPost("validate")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Teacher")]
     public async Task<IActionResult> Validate([FromBody] ValidateRedemptionDto dto)
     {
         if (!TryGetCurrentUserId(out var adminId)) return Unauthorized();

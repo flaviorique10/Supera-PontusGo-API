@@ -29,6 +29,11 @@ namespace PontusGo.Domain.Models
             TuitionStatus = status;
         }
 
+        public void UpdatePassword(string newPasswordHash)
+        {
+            PasswordHash = newPasswordHash;
+        }
+
         public void AddPoints(int points)
         {
             if (points <= 0) throw new ArgumentException("Os pontos ganhos devem ser maiores que zero.");

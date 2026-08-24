@@ -8,10 +8,12 @@ namespace PontusGo.Application.Services;
 public class ProductService : IProductService
 {
     private readonly IProductRepository _productRepository;
+    private readonly IRedemptionRepository _redemptionRepository;
 
-    public ProductService(IProductRepository productRepository)
+    public ProductService(IProductRepository productRepository, IRedemptionRepository redemptionRepository)
     {
         _productRepository = productRepository;
+        _redemptionRepository = redemptionRepository;
     }
 
     public async Task<IEnumerable<ProductDto>> GetAllActiveAsync()
@@ -55,6 +57,19 @@ public class ProductService : IProductService
         return MapToDto(product);
     }
 
+    public async Task<ProductDto?> UpdateStockAsync(Guid id, int newStockQuantity)
+    {
+        if (newStockQuantity < 0)
+            throw new ArgumentException("A quantidade em estoque não pode ser negativa.");
+
+        var product = await _productRepository.GetByIdAsync(id);
+        if (product == null) return null;
+
+        product.SetStock(newStockQuantity);
+        await _productRepository.UpdateAsync(product);
+        return MapToDto(product);
+    }
+
     public async Task<bool> DeactivateAsync(Guid id)
     {
         var product = await _productRepository.GetByIdAsync(id);
@@ -63,6 +78,33 @@ public class ProductService : IProductService
         product.Deactivate();
         await _productRepository.UpdateAsync(product);
         return true;
+    }
+
+    public async Task<bool> ActivateAsync(Guid id)
+    {
+        var product = await _productRepository.GetByIdAsync(id);
+        if (product == null) return false;
+
+        product.Activate();
+        await _productRepository.UpdateAsync(product);
+        return true;
+    }
+
+    public async Task<(bool Success, string Message, bool DeletedPermanently)> DeleteAsync(Guid id)
+    {
+        var product = await _productRepository.GetByIdAsync(id);
+        if (product == null) return (false, "Produto não encontrado.", false);
+
+        var hasRedemptions = await _redemptionRepository.HasRedemptionsForProductAsync(id);
+        if (hasRedemptions)
+        {
+            product.Deactivate();
+            await _productRepository.UpdateAsync(product);
+            return (true, "Este item possui histórico de resgates e não pode ser apagado fisicamente. Ele foi desativado do catálogo.", false);
+        }
+
+        await _productRepository.DeleteAsync(product);
+        return (true, "Recompensa excluída permanentemente do sistema.", true);
     }
 
     private static ProductDto MapToDto(Product product)

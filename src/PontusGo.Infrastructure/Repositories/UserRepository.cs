@@ -35,6 +35,15 @@ public class UserRepository : IUserRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<User>> GetAllTeachersAsync()
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .Where(user => user.Role == UserRole.Teacher)
+            .OrderBy(user => user.Name)
+            .ToListAsync();
+    }
+
     public async Task AddAsync(User user)
     {
         await _context.Users.AddAsync(user);

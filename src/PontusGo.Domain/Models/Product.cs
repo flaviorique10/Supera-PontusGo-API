@@ -1,4 +1,4 @@
-﻿namespace PontusGo.Domain.Models
+namespace PontusGo.Domain.Models
 {
     public class Product
     {
@@ -25,6 +25,12 @@
         {
             if (quantity <= 0) throw new ArgumentException("A quantidade a adicionar deve ser maior que zero.");
             StockQuantity += quantity;
+        }
+
+        public void SetStock(int quantity)
+        {
+            if (quantity < 0) throw new ArgumentException("A quantidade em estoque não pode ser negativa.");
+            StockQuantity = quantity;
         }
 
         public void Deactivate() => IsActive = false;

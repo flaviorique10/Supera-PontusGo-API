@@ -9,112 +9,146 @@ public static class LocalDemoSeeder
 {
     public static async Task SeedAsync(PontusGoDbContext context)
     {
-        if (await context.Users.AnyAsync()) return;
+        var hasChanges = false;
 
-        var admin = new User
+        // 1. Garantir que o Administrador exista
+        if (!await context.Users.AnyAsync(u => u.Email == "admin@pontusgo.demo"))
         {
-            Name = "Caio Martins",
-            Email = "admin@pontusgo.demo",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
-            Role = UserRole.Admin,
-            TuitionStatus = TuitionStatus.UpToDate
-        };
+            var admin = new User
+            {
+                Name = "Caio Martins",
+                Email = "admin@pontusgo.demo",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
+                Role = UserRole.Admin,
+                TuitionStatus = TuitionStatus.UpToDate
+            };
+            await context.Users.AddAsync(admin);
+            hasChanges = true;
+        }
 
-        var student1 = new User
+        // 2. Garantir que o Professor exista
+        if (!await context.Users.AnyAsync(u => u.Email == "professor@pontusgo.demo"))
         {
-            Name = "Marina Costa",
-            Email = "aluno@pontusgo.demo",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Aluno@123"),
-            Role = UserRole.Student,
-            TuitionStatus = TuitionStatus.UpToDate
-        };
-        student1.AddPoints(3_130);
+            var teacher = new User
+            {
+                Name = "Helena Fernandes (Professora)",
+                Email = "professor@pontusgo.demo",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Prof@123"),
+                Role = UserRole.Teacher,
+                TuitionStatus = TuitionStatus.UpToDate
+            };
+            await context.Users.AddAsync(teacher);
+            hasChanges = true;
+        }
 
-        var student2 = new User
+        // 3. Garantir os Estudantes Demo
+        if (!await context.Users.AnyAsync(u => u.Email == "aluno@pontusgo.demo"))
         {
-            Name = "Lucas Silva",
-            Email = "lucas@pontusgo.demo",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Aluno@123"),
-            Role = UserRole.Student,
-            TuitionStatus = TuitionStatus.Pending
-        };
-        student2.AddPoints(180);
+            var student1 = new User
+            {
+                Name = "Marina Costa",
+                Email = "aluno@pontusgo.demo",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Aluno@123"),
+                Role = UserRole.Student,
+                TuitionStatus = TuitionStatus.UpToDate
+            };
+            student1.AddPoints(3_130);
+            await context.Users.AddAsync(student1);
 
-        var student3 = new User
+            var initialPoints1 = new PointTransaction(
+                student1.Id,
+                3_130,
+                "Saldo inicial do ambiente local")
+            {
+                PointsAwarded = 3_130,
+                ActivityDescription = "Saldo inicial do ambiente local"
+            };
+            await context.PointTransactions.AddAsync(initialPoints1);
+            hasChanges = true;
+        }
+
+        if (!await context.Users.AnyAsync(u => u.Email == "lucas@pontusgo.demo"))
         {
-            Name = "Beatriz Santos",
-            Email = "beatriz@pontusgo.demo",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Aluno@123"),
-            Role = UserRole.Student,
-            TuitionStatus = TuitionStatus.Overdue
-        };
-        student3.AddPoints(90);
+            var student2 = new User
+            {
+                Name = "Lucas Silva",
+                Email = "lucas@pontusgo.demo",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Aluno@123"),
+                Role = UserRole.Student,
+                TuitionStatus = TuitionStatus.Pending
+            };
+            student2.AddPoints(180);
+            await context.Users.AddAsync(student2);
 
-        var cafeteria = CreateProduct(
-            "Vale cafeteria",
-            "Um lanche e uma bebida para recarregar as ideias.",
-            650,
-            12);
-        var cinema = CreateProduct(
-            "Ingresso de cinema",
-            "Uma sessão para curtir qualquer lançamento.",
-            1_200,
-            16);
-        var books = CreateProduct(
-            "Kit de livros",
-            "Três leituras para ampliar seu repertório.",
-            1_800,
-            8);
-        var notebook = CreateProduct(
-            "Caderno PontusGo",
-            "Capa dura, pautado e pronto para novas ideias.",
-            480,
-            23);
+            var initialPoints2 = new PointTransaction(
+                student2.Id,
+                180,
+                "Assiduidade (+10 pts), Participação (+10 pts), Fazer Tarefa (+10 pts)")
+            {
+                PointsAwarded = 180,
+                ActivityDescription = "Assiduidade (+10 pts), Participação (+10 pts), Fazer Tarefa (+10 pts)"
+            };
+            await context.PointTransactions.AddAsync(initialPoints2);
+            hasChanges = true;
+        }
 
-        student1.DeductPoints(cafeteria.PointsCost);
-        cafeteria.DecreaseStock();
-
-        var initialPoints1 = new PointTransaction(
-            student1.Id,
-            3_130,
-            "Saldo inicial do ambiente local")
+        if (!await context.Users.AnyAsync(u => u.Email == "beatriz@pontusgo.demo"))
         {
-            PointsAwarded = 3_130,
-            ActivityDescription = "Saldo inicial do ambiente local"
-        };
+            var student3 = new User
+            {
+                Name = "Beatriz Santos",
+                Email = "beatriz@pontusgo.demo",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Aluno@123"),
+                Role = UserRole.Student,
+                TuitionStatus = TuitionStatus.Overdue
+            };
+            student3.AddPoints(90);
+            await context.Users.AddAsync(student3);
 
-        var initialPoints2 = new PointTransaction(
-            student2.Id,
-            180,
-            "Assiduidade (+10 pts), Participação (+10 pts), Fazer Tarefa (+10 pts)")
+            var initialPoints3 = new PointTransaction(
+                student3.Id,
+                90,
+                "Assiduidade (+10 pts), Participação (+10 pts)")
+            {
+                PointsAwarded = 90,
+                ActivityDescription = "Assiduidade (+10 pts), Participação (+10 pts)"
+            };
+            await context.PointTransactions.AddAsync(initialPoints3);
+            hasChanges = true;
+        }
+
+        // 4. Garantir Produtos do Catálogo
+        if (!await context.Products.AnyAsync())
         {
-            PointsAwarded = 180,
-            ActivityDescription = "Assiduidade (+10 pts), Participação (+10 pts), Fazer Tarefa (+10 pts)"
-        };
+            var cafeteria = CreateProduct(
+                "Vale cafeteria",
+                "Um lanche e uma bebida para recarregar as ideias.",
+                650,
+                12);
+            var cinema = CreateProduct(
+                "Ingresso de cinema",
+                "Uma sessão para curtir qualquer lançamento.",
+                1_200,
+                16);
+            var books = CreateProduct(
+                "Kit de livros",
+                "Três leituras para ampliar seu repertório.",
+                1_800,
+                8);
+            var notebook = CreateProduct(
+                "Caderno PontusGo",
+                "Capa dura, pautado e pronto para novas ideias.",
+                480,
+                23);
 
-        var initialPoints3 = new PointTransaction(
-            student3.Id,
-            90,
-            "Assiduidade (+10 pts), Participação (+10 pts)")
+            await context.Products.AddRangeAsync(cafeteria, cinema, books, notebook);
+            hasChanges = true;
+        }
+
+        if (hasChanges)
         {
-            PointsAwarded = 90,
-            ActivityDescription = "Assiduidade (+10 pts), Participação (+10 pts)"
-        };
-
-        var redemption = new Redemption(
-            student1.Id,
-            cafeteria.Id,
-            cafeteria.PointsCost,
-            "PG-8A2F-41C9")
-        {
-            PointsSpent = cafeteria.PointsCost
-        };
-
-        await context.Users.AddRangeAsync(admin, student1, student2, student3);
-        await context.Products.AddRangeAsync(cafeteria, cinema, books, notebook);
-        await context.PointTransactions.AddRangeAsync(initialPoints1, initialPoints2, initialPoints3);
-        await context.Redemptions.AddAsync(redemption);
-        await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
+        }
     }
 
     private static Product CreateProduct(

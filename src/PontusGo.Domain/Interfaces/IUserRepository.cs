@@ -1,4 +1,4 @@
-﻿using PontusGo.Domain.Models;
+using PontusGo.Domain.Models;
 
 namespace PontusGo.Domain.Interfaces
 {
@@ -7,6 +7,7 @@ namespace PontusGo.Domain.Interfaces
         Task<User?> GetByIdAsync(Guid id);
         Task<User?> GetByEmailAsync(string email);
         Task<IEnumerable<User>> GetAllStudentsAsync();
+        Task<IEnumerable<User>> GetAllTeachersAsync();
         Task AddAsync(User user);
         Task UpdateAsync(User user);
     }

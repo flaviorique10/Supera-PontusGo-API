@@ -39,6 +39,12 @@ public class UserService : IUserService
         return studentDtos;
     }
 
+    public async Task<IEnumerable<UserDto>> GetAllTeachersAsync()
+    {
+        var teachers = (await _userRepository.GetAllTeachersAsync()).ToList();
+        return teachers.Select(t => MapToDto(t, 0));
+    }
+
     public async Task<UserDto?> GetByIdAsync(Guid id)
     {
         var user = await _userRepository.GetByIdAsync(id);
@@ -95,6 +101,24 @@ public class UserService : IUserService
             dto.TuitionStatus = TuitionStatus.UpToDate;
 
         return CreateUserAsync(dto.Name, dto.Email, dto.Password, UserRole.Student, dto.TuitionStatus);
+    }
+
+    public Task<UserDto> CreateTeacherAsync(CreateTeacherDto dto)
+    {
+        return CreateUserAsync(dto.Name, dto.Email, dto.Password, UserRole.Teacher, TuitionStatus.UpToDate);
+    }
+
+    public async Task<bool> ResetPasswordAsync(Guid userId, string newPassword)
+    {
+        if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 8)
+            throw new ArgumentException("A nova senha deve ter pelo menos 8 caracteres.");
+
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null) return false;
+
+        user.UpdatePassword(BCrypt.Net.BCrypt.HashPassword(newPassword));
+        await _userRepository.UpdateAsync(user);
+        return true;
     }
 
     public async Task<UserDto?> AddPointsAsync(Guid studentId, int points, string description)
